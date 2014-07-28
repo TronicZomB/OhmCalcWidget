@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout android:id="@+id/resistor_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="25"
+        android:orientation="horizontal">
+	    <ImageButton android:id="@+id/first_band"
+	        android:layout_weight="25"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:gravity="center"
+	        android:background="@drawable/brown"/>
+	    <ImageButton android:id="@+id/second_band"
+	        android:layout_weight="25"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:gravity="center"
+	        android:background="@drawable/black"/>
+	    <ImageButton android:id="@+id/multiplier"
+	        android:layout_weight="25"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:gravity="center"
+	        android:background="@drawable/red"/>
+	    <ImageButton android:id="@+id/tolerance"
+	        android:layout_weight="25"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:gravity="center"
+	        android:background="@drawable/gold"/>
+	</LinearLayout>
+	<TextView android:id="@+id/resistance_value"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_weight="75"
+	    android:text="@+string/defualt_value"
+	    android:gravity="center"
+	    android:background="@drawable/resistor_band_shape"/>
+</LinearLayout>

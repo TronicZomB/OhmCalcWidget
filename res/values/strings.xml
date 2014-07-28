@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OhmCalc Widget</string>
+    <string name="defualt_value">1k\u03A9 \u00B1 5%</string>
+	
+</resources>

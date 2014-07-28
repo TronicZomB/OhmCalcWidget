@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="troniczomb.productions.ohmcalcwidget1_1"
+    android:versionCode="2"
+    android:versionName="1.1" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:theme="@style/AppTheme" >
+        <receiver 
+            android:name=".OhmCalcWidget"
+            android:label="OhmCalc Widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="troniczomb.productions.ohmcalcwidget.FIRST_BAND"/>
+                <action android:name="troniczomb.productions.ohmcalcwidget.SECOND_BAND"/>
+                <action android:name="troniczomb.productions.ohmcalcwidget.MULTIPLIER"/>
+                <action android:name="troniczomb.productions.ohmcalcwidget.TOLERANCE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info"/>
+        </receiver>
+    </application>
+
+</manifest>
