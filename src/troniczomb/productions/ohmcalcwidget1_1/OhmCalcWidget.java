@@ -74,98 +74,98 @@ public class OhmCalcWidget extends AppWidgetProvider {
 	}
 	
 	@Override
+	public void onDeleted(Context context, int[] appWidgetIds) {
+		int widgetID = appWidgetIds[0];
+		String preferences = PREFS + Integer.toString(widgetID);
+		SharedPreferences values = context.getSharedPreferences(preferences, 0);
+		SharedPreferences.Editor editor = values.edit().clear();
+		editor.commit();
+		this.onDeleted(context, new int[] {widgetID});
+	}
+	
+	@Override
 	public void onReceive(Context context, Intent intent) {
-		if (intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_DELETED)) {
-			int widgetID = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
+		//super.onReceive(context, intent);
+		SharedPreferences values = null;
+		int widgetID = 0, firstBandValue = 0, secondBandValue = 0, multiplierValue = 0, toleranceValue = 0;
+
+		try {
+			widgetID = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
 			String preferences = PREFS + Integer.toString(widgetID);
-			SharedPreferences values = context.getSharedPreferences(preferences, 0);
-			SharedPreferences.Editor editor = values.edit().clear();
+			values = context.getSharedPreferences(preferences, 0);
+			firstBandValue = values.getInt("first_band_value", 1);
+			secondBandValue = values.getInt("second_band_value", 0);
+			multiplierValue = values.getInt("multiplier_value", 2);
+			toleranceValue = values.getInt("tolerance_value", 1);
+		} catch (NullPointerException npe) {
+			return;
+		}
+
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+
+		if (intent.getAction().equals(FIRST_BAND)) {
+			// nextBandColor() will set the proper band based on the next value and return an integer that is BandValue + 1
+			firstBandValue = getNextBandColor(context, BandType.FIRST, firstBandValue);
+
+			SharedPreferences.Editor editor = values.edit();
+			editor.putInt("first_band_value", firstBandValue);
 			editor.commit();
-			this.onDeleted(context, new int[] {widgetID});
+		}
+		else if (intent.getAction().equals(SECOND_BAND)) {
+			// nextBandColor() will return an integer that is BandValue + 1
+			secondBandValue = getNextBandColor(context, BandType.SECOND, secondBandValue);
+
+			SharedPreferences.Editor editor = values.edit();
+			editor.putInt("second_band_value", secondBandValue);
+			editor.commit();
+		}
+		else if (intent.getAction().equals(MULTIPLIER)) {
+			// nextBandColor() will return an integer that is BandValue + 1
+			multiplierValue = getNextBandColor(context, BandType.MULTIPLIER, multiplierValue);
+
+			SharedPreferences.Editor editor = values.edit();
+			editor.putInt("multiplier_value", multiplierValue);
+			editor.commit();
+		}
+		else if (intent.getAction().equals(TOLERANCE)) {
+			// nextBandColor() will return an integer that is BandValue + 1
+			toleranceValue = getNextBandColor(context, BandType.TOLERANCE, toleranceValue);
+
+			SharedPreferences.Editor editor = values.edit();
+			editor.putInt("tolerance_value", toleranceValue);
+			editor.commit();
 		}
 		else {
 			super.onReceive(context, intent);
-			SharedPreferences values = null;
-			int widgetID = 0, firstBandValue = 0, secondBandValue = 0, multiplierValue = 0, toleranceValue = 0;
-			
-			try {
-				widgetID = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
-				String preferences = PREFS + Integer.toString(widgetID);
-				values = context.getSharedPreferences(preferences, 0);
-				firstBandValue = values.getInt("first_band_value", 1);
-				secondBandValue = values.getInt("second_band_value", 0);
-				multiplierValue = values.getInt("multiplier_value", 2);
-				toleranceValue = values.getInt("tolerance_value", 1);
-			} catch (NullPointerException npe) {
-				return;
-			}
-			
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-			
-			if (intent.getAction().equals(FIRST_BAND)) {
-				// nextBandColor() will set the proper band based on the next value and return an integer that is BandValue + 1
-				firstBandValue = getNextBandColor(context, BandType.FIRST, firstBandValue);
-				
-				SharedPreferences.Editor editor = values.edit();
-			    editor.putInt("first_band_value", firstBandValue);
-			    editor.commit();
-			}
-			else if (intent.getAction().equals(SECOND_BAND)) {
-				// nextBandColor() will return an integer that is BandValue + 1
-				secondBandValue = getNextBandColor(context, BandType.SECOND, secondBandValue);
-				
-				SharedPreferences.Editor editor = values.edit();
-			    editor.putInt("second_band_value", secondBandValue);
-			    editor.commit();
-			}
-			else if (intent.getAction().equals(MULTIPLIER)) {
-				// nextBandColor() will return an integer that is BandValue + 1
-				multiplierValue = getNextBandColor(context, BandType.MULTIPLIER, multiplierValue);
-				
-				SharedPreferences.Editor editor = values.edit();
-			    editor.putInt("multiplier_value", multiplierValue);
-			    editor.commit();
-			}
-			else if (intent.getAction().equals(TOLERANCE)) {
-				// nextBandColor() will return an integer that is BandValue + 1
-				toleranceValue = getNextBandColor(context, BandType.TOLERANCE, toleranceValue);
-				
-				SharedPreferences.Editor editor = values.edit();
-			    editor.putInt("tolerance_value", toleranceValue);
-			    editor.commit();
-			}
-			else {
-				//super.onReceive(context, intent);
-				return;
-			}
-					
-			// Update the view items based on the new integer values
-			updateBands(context, widgetID, firstBandValue, secondBandValue, multiplierValue, toleranceValue);
-			
-			// Concatenate the integer value of the first band value with the integer value of the second band color
-			String value = Integer.toString(firstBandValue) + Integer.toString(secondBandValue);
-			
-			// Turn the concatenation of the two integers into a double value
-			baseValue = Double.parseDouble(value);
-			
-			multiplyBaseValue(multiplierValue);
-			
-			String units = getUnitsAndAdjustBaseValue();
-			String tolerance = getTolerance(toleranceValue);
-	
-			DecimalFormat df = new DecimalFormat("#.#");
-			resistance = df.format(baseValue) + units + tolerance;
-			
-			remoteViews.setTextViewText(R.id.resistance_value, resistance);
-			
-			//TODO remove if testing goes as planned
-			//ComponentName thisWidget = new ComponentName(context, OhmCalcWidget.class);
-	        AppWidgetManager manager = AppWidgetManager.getInstance(context);
-	        //manager.updateAppWidget(thisWidget, remoteViews);
-	        manager.updateAppWidget(widgetID, remoteViews);
-	        
-	        //super.onReceive(context, intent);
+			return;
 		}
+
+		// Update the view items based on the new integer values
+		updateBands(context, widgetID, firstBandValue, secondBandValue, multiplierValue, toleranceValue);
+
+		// Concatenate the integer value of the first band value with the integer value of the second band color
+		String value = Integer.toString(firstBandValue) + Integer.toString(secondBandValue);
+
+		// Turn the concatenation of the two integers into a double value
+		baseValue = Double.parseDouble(value);
+
+		multiplyBaseValue(multiplierValue);
+
+		String units = getUnitsAndAdjustBaseValue();
+		String tolerance = getTolerance(toleranceValue);
+
+		DecimalFormat df = new DecimalFormat("#.#");
+		resistance = df.format(baseValue) + units + tolerance;
+
+		remoteViews.setTextViewText(R.id.resistance_value, resistance);
+
+		//TODO remove if testing goes as planned
+		//ComponentName thisWidget = new ComponentName(context, OhmCalcWidget.class);
+		AppWidgetManager manager = AppWidgetManager.getInstance(context);
+		//manager.updateAppWidget(thisWidget, remoteViews);
+		manager.updateAppWidget(widgetID, remoteViews);
+
+		//super.onReceive(context, intent);
 	}
 	
 	//TODO Reevaluate the if statements below
