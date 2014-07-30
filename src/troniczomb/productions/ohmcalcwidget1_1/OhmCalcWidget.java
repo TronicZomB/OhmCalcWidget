@@ -80,7 +80,6 @@ public class OhmCalcWidget extends AppWidgetProvider {
 		SharedPreferences values = context.getSharedPreferences(preferences, 0);
 		SharedPreferences.Editor editor = values.edit().clear();
 		editor.commit();
-		this.onDeleted(context, new int[] {widgetID});
 	}
 	
 	@Override
