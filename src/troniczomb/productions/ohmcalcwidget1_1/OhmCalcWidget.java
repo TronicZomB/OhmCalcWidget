@@ -34,40 +34,33 @@ public class OhmCalcWidget extends AppWidgetProvider {
 		for (int widgetId : allWidgetIds) {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 			
-			//Intent appUpdate = new Intent(context, OhmCalcWidget.class);
-			//appUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			//appUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-			//appUpdate.setData(Uri.parse(appUpdate.toUri(Intent.URI_INTENT_SCHEME)));
-			//PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context, widgetId, appUpdate, PendingIntent.FLAG_UPDATE_CURRENT);
-			
-			
-			Intent first_band_intent = new Intent(context, OhmCalcWidget.class);
-			first_band_intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-			first_band_intent.setAction(FIRST_BAND);
-			first_band_intent.setData(Uri.parse(first_band_intent.toUri(Intent.URI_INTENT_SCHEME)));
-			PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context, widgetId, first_band_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		    remoteViews.setOnClickPendingIntent(R.id.first_band, pendingIntent1);
+			Intent intent = new Intent(context, OhmCalcWidget.class);
+			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+			intent.setAction(FIRST_BAND);
+			intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		    remoteViews.setOnClickPendingIntent(R.id.first_band, pendingIntent);
 		    
-		    Intent second_band_intent = new Intent(context, OhmCalcWidget.class);
-		    second_band_intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-		    second_band_intent.setAction(SECOND_BAND);
-		    second_band_intent.setData(Uri.parse(second_band_intent.toUri(Intent.URI_INTENT_SCHEME)));
-		    PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, widgetId, second_band_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		    remoteViews.setOnClickPendingIntent(R.id.second_band, pendingIntent2);
+		    intent = new Intent(context, OhmCalcWidget.class);
+		    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+		    intent.setAction(SECOND_BAND);
+		    intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+		    pendingIntent = PendingIntent.getBroadcast(context, widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		    remoteViews.setOnClickPendingIntent(R.id.second_band, pendingIntent);
 		    
-		    Intent multiplier_intent = new Intent(context, OhmCalcWidget.class);
-		    multiplier_intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-		    multiplier_intent.setAction(MULTIPLIER);
-		    multiplier_intent.setData(Uri.parse(multiplier_intent.toUri(Intent.URI_INTENT_SCHEME)));
-		    PendingIntent pendingIntent3 = PendingIntent.getBroadcast(context, widgetId, multiplier_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		    remoteViews.setOnClickPendingIntent(R.id.multiplier, pendingIntent3);
+		    intent = new Intent(context, OhmCalcWidget.class);
+		    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+		    intent.setAction(MULTIPLIER);
+		    intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+		    pendingIntent = PendingIntent.getBroadcast(context, widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		    remoteViews.setOnClickPendingIntent(R.id.multiplier, pendingIntent);
 		    
-		    Intent tolerance_intent = new Intent(context, OhmCalcWidget.class);
-		    tolerance_intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-		    tolerance_intent.setAction(TOLERANCE);
-		    tolerance_intent.setData(Uri.parse(tolerance_intent.toUri(Intent.URI_INTENT_SCHEME)));
-		    PendingIntent pendingIntent4 = PendingIntent.getBroadcast(context, widgetId, tolerance_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		    remoteViews.setOnClickPendingIntent(R.id.tolerance, pendingIntent4);
+		    intent = new Intent(context, OhmCalcWidget.class);
+		    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+		    intent.setAction(TOLERANCE);
+		    intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+		    pendingIntent = PendingIntent.getBroadcast(context, widgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		    remoteViews.setOnClickPendingIntent(R.id.tolerance, pendingIntent);
 			
 			appWidgetManager.updateAppWidget(widgetId, remoteViews);
 		}
@@ -80,11 +73,11 @@ public class OhmCalcWidget extends AppWidgetProvider {
 		SharedPreferences values = context.getSharedPreferences(preferences, 0);
 		SharedPreferences.Editor editor = values.edit().clear();
 		editor.commit();
+		super.onDeleted(context, appWidgetIds);
 	}
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		//super.onReceive(context, intent);
 		SharedPreferences values = null;
 		int widgetID = 0, firstBandValue = 0, secondBandValue = 0, multiplierValue = 0, toleranceValue = 0;
 
@@ -158,37 +151,31 @@ public class OhmCalcWidget extends AppWidgetProvider {
 
 		remoteViews.setTextViewText(R.id.resistance_value, resistance);
 
-		//TODO remove if testing goes as planned
-		//ComponentName thisWidget = new ComponentName(context, OhmCalcWidget.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(context);
-		//manager.updateAppWidget(thisWidget, remoteViews);
 		manager.updateAppWidget(widgetID, remoteViews);
-
-		//super.onReceive(context, intent);
 	}
 	
-	//TODO Reevaluate the if statements below
 	private Integer getNextBandColor(Context context, BandType band, int currentBandValue) {
 		int nextBandValue = currentBandValue + 1;
 		
 		switch (band) {
 		case FIRST:
-			if (nextBandValue > 9 || nextBandValue <= 0) {
+			if (nextBandValue > 9) {
 				nextBandValue = 1;
 			}
 			break;
 		case SECOND:
-			if (nextBandValue > 9 || nextBandValue <= -1) {
+			if (nextBandValue > 9) {
 				nextBandValue = 0;
 			}
 			break;
 		case MULTIPLIER:
-			if (nextBandValue > 7 || nextBandValue <= -1) {
+			if (nextBandValue > 7) {
 				nextBandValue = 0;
 			}
 			break;
 		case TOLERANCE:
-			if (nextBandValue > 1 || nextBandValue <= -1) {
+			if (nextBandValue > 1) {
 				nextBandValue = 0;
 			}
 			break;
@@ -295,10 +282,7 @@ public class OhmCalcWidget extends AppWidgetProvider {
 			remoteViews.setImageViewResource(R.id.tolerance, R.drawable.gold);
 		}
 
-		//TODO remove if testing goes as planned
-		//ComponentName thiswidget = new ComponentName(context, OhmCalcWidget.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
-        //manager.updateAppWidget(thiswidget, remoteViews);
         manager.updateAppWidget(widgetId, remoteViews);
 	}
 	
