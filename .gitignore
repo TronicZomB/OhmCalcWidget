@@ -6,6 +6,8 @@ bin/
 gen/
 local.properties
 .classpath
+*.classpath
+.DS_Store
 .project
 proguard/
 *.iml
