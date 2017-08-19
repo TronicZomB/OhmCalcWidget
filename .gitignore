@@ -1,1 +1,14 @@
-bin obj release compile *.bak *.user *.suo
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+local.properties
+.classpath
+.project
+proguard/
+*.iml
+*.ipr
+*.iws
+.idea/
